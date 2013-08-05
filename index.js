@@ -1,5 +1,5 @@
 "use strict";
-var config, minimatch, fs, wrench, win32, path, pathSeparator, registration, normalize, windowsDrive, wrench, __determinePath, _appendFilesToInclude,
+var config, minimatch, fs, wrench, win32, path, pathSeparator, registration, normalize, windowsDrive, wrench, _appendFilesToInclude,
   __slice = [].slice;
 
 path = require('path');
@@ -53,7 +53,7 @@ _appendFilesToInclude = function(mimosaConfig, options, next) {
   options.runConfigs.forEach(function(runConfig) {
     var files, includeFolder;
 
-    includeFolder = __determinePath(mimosaConfig.requireBuildTextPluginInclude.folder, runConfig.baseUrl);     
+    includeFolder = runConfig.baseUrl;     
     
     mimosaConfig.requireBuildInclude.patterns.forEach(function (pattern) {
       var base, absPattern;
@@ -81,16 +81,6 @@ _appendFilesToInclude = function(mimosaConfig, options, next) {
   });
 
   next();
-};
-
-__determinePath = function(thePath, relativeTo) {
-  if (windowsDrive.test(thePath)) {
-    return thePath;
-  }
-  if (thePath.indexOf("/") === 0) {
-    return thePath;
-  }
-  return path.join(relativeTo, thePath);
 };
 
 module.exports = {
