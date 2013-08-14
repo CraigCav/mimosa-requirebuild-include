@@ -23,7 +23,11 @@ The `'mimosa-requirebuild-include'` module configuration is a pointer to a direc
 
 ```
 requireBuildInclude:
-  patterns: ["some/dynamically/loaded/folder/**/*.js"]
+  folder: null,
+  patterns: [],
+  exclude:[/-built.js$/,/reload-client.js$/]
 ```
 
-* `patterns`: an array of glob patterns, used to match files to include in the r.js config's 'include' array.  Ex: foo/*.js. All files in the watch.javascriptDir/foo folder will be pushed into the array and already present array entries will be left alone.
+* `folder`: The folder to scan for files to include. This defaults to the `baseUrl` of the r.js run config, but this setting allows for providing an override. If provided, `folder` should be absolute or relative to the `watch.sourceDir`
+* `patterns`: an array of glob patterns, (ex: `"some/dynamically/loaded/folder/**/*.js"`) used to match files to include in the r.js config's 'include' array.  Ex: foo/*.js. All files in the watch.javascriptDir/foo folder will be pushed into the array and already present array entries will be left alone.
+* `exclude`: a list of regexes or strings used to match files to be excluded files that match any patterns. By default a few common mimosa files/patterns that should not be bundled in an r.js run are included.

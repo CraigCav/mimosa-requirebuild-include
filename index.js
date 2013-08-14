@@ -1,6 +1,7 @@
 "use strict";
 var config, minimatch, fs, wrench, win32, path, pathSeparator, registration, normalize, windowsDrive, wrench, _appendFilesToInclude,
-  __slice = [].slice;
+  __slice = [].slice,
+  requireModule = null;
 
 path = require('path');
 
@@ -26,6 +27,7 @@ registration = function(mimosaConfig, register) {
   var e;
 
   if (mimosaConfig.isOptimize) {
+    requireModule = mimosaConfig.installedModules["mimosa-require"]
     e = mimosaConfig.extensions;
     register(['add', 'update', 'remove'], 'beforeOptimize', _appendFilesToInclude, __slice.call(e.javascript).concat(__slice.call(e.template)));
     return register(['postBuild'], 'beforeOptimize', _appendFilesToInclude);
@@ -53,12 +55,12 @@ _appendFilesToInclude = function(mimosaConfig, options, next) {
   options.runConfigs.forEach(function(runConfig) {
     var files, includeFolder;
 
-    includeFolder = runConfig.baseUrl;     
-    
+    includeFolder = mimosaConfig.requireBuildInclude.folder || runConfig.baseUrl;
+
     mimosaConfig.requireBuildInclude.patterns.forEach(function (pattern) {
       var base, absPattern;
 
-      base = normalize(path.join(runConfig.baseUrl, pathSeparator));
+      base = normalize(path.join(includeFolder, pathSeparator));
       absPattern = normalize(path.resolve(base, pattern));
 
       files = wrench.readdirSyncRecursive(includeFolder)
@@ -68,13 +70,33 @@ _appendFilesToInclude = function(mimosaConfig, options, next) {
         .filter(function(file) {
           return fs.statSync(file).isFile();
         })
+        .filter(function(file) {
+          return mimosaConfig.requireBuildInclude.exclude.indexOf(file) == -1
+        })
+        .filter(function(file) {
+          if (mimosaConfig.requireBuildInclude.excludeRegex && file.match(mimosaConfig.requireBuildInclude.excludeRegex)) {
+            return false
+          } else {
+            return true
+          }
+        })
         .map(normalize)
         .filter(function(file) {
           return minimatch(file, absPattern);
         });
 
       return files.forEach(function(file) {
-        var fileAMD = file.replace(normalize(runConfig.baseUrl), '').substring(1).replace(/\\/g, "/").replace(getExtension(file), '');
+        // Check with mimosa-require to see if path has been aliased, if so
+        // alias must be used
+        var fileAMD = requireModule.manipulatePathWithAlias(file);
+
+        // If no alias replacement, get relative url/amd path to file
+        if (fileAMD === file) {
+          fileAMD = path.relative(runConfig.baseUrl, file);
+        }
+
+        // Proper slashes and remove extension
+        fileAMD = fileAMD.split(path.sep).join("/").replace(getExtension(file), '');
         return runConfig.include.push(fileAMD);
       });
     });
