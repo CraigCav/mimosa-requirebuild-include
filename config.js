@@ -26,11 +26,13 @@ exports.validate = function(config, validators) {
   var errors = [];
 
   validators.isArrayOfStringsMustExist(errors, "requireBuildInclude.patterns", config.requireBuildInclude.patterns);
-  if(validators.ifExistsIsString(errors, "requireBuildInclude.folder", config.requireBuildInclude.folder))
-    config.requireBuildInclude.folder = validators.multiPathMustExist(errors, "requireBuildInclude.folder", config.requireBuildInclude.folder, config.watch.sourceDir);
-    config.requireBuildInclude.folder = config.requireBuildInclude.folder.replace(config.watch.sourceDir, config.watch.compiledDir)
 
-  validators.ifExistsFileExcludeWithRegexAndString(errors, "requireBuildInclude.exclude", config.requireBuildInclude, config.watch.compiledDir)
+  if(validators.ifExistsIsString(errors, "requireBuildInclude.folder", config.requireBuildInclude.folder)) {
+    config.requireBuildInclude.folder = validators.multiPathMustExist(errors, "requireBuildInclude.folder", config.requireBuildInclude.folder, config.watch.sourceDir);
+    config.requireBuildInclude.folder = config.requireBuildInclude.folder.replace(config.watch.sourceDir, config.watch.compiledDir);
+  }
+
+  validators.ifExistsFileExcludeWithRegexAndString(errors, "requireBuildInclude.exclude", config.requireBuildInclude, config.watch.compiledDir);
 
   return errors;
 };
