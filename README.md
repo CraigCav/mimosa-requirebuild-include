@@ -13,7 +13,7 @@ For more information regarding Mimosa, see http://mimosajs.com
 
 ## Usage
 
-Add `'requirebuild-include'` to your list of modules.  That's all!  Mimosa will install the module for you when you start up.
+Add `'requirebuild-include'` to your list of modules after the `'require'` module.  Order matters.  And that's all!  Mimosa will install the module for you when you start up.
 
 ## Functionality
 
