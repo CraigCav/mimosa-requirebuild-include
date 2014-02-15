@@ -1,6 +1,6 @@
 {
   "name": "mimosa-requirebuild-include",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "homepage": "https://github.com/craigcav/mimosa-requirebuild-include",
   "author": "Craig Cavalier",
   "description": "Mimosa module for modifiying the r.js config pre-optimize",
@@ -21,8 +21,7 @@
     "requirejs"
   ],
   "dependencies": {
-    "logmimosa": "0.5.0",
-    "wrench": "1.5.1",
+    "wrench": "1.5.6",
     "minimatch": "~0.2.5"
   },
   "license": "MIT",
